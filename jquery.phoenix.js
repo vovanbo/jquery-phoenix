@@ -71,7 +71,7 @@
           this.element.value = savedValue;
         }
         e = $.Event("phnx.loaded");
-        return this.$element.trigger(e);
+        this.$element.trigger(e);
       }
     };
 
@@ -82,7 +82,7 @@
       }), JSON.stringify(selectedValues)) : this.element.value;
       e = $.Event("phnx.saved");
       this.$element.trigger(e);
-      return this.updateIndex();
+      this.updateIndex();
     };
 
     Phoenix.prototype.start = function() {
@@ -94,7 +94,7 @@
       })(this)), this.options.saveInterval);
       saveTimers.push(saveTimer);
       e = $.Event("phnx.started");
-      return this.$element.trigger(e);
+      this.$element.trigger(e);
     };
 
     Phoenix.prototype.stop = function() {
@@ -103,7 +103,7 @@
         return clearInterval(t);
       });
       e = $.Event("phnx.stopped");
-      return this.$element.trigger(e);
+      this.$element.trigger(e);
     };
 
     Phoenix.prototype.init = function() {
@@ -112,15 +112,20 @@
       }
       switch (this.action) {
         case "remove":
-          return this.remove();
+          this.remove();
+          break;
         case "start":
-          return this.start();
+          this.start();
+          break;
         case "stop":
-          return this.stop();
+          this.stop();
+          break;
         case "load":
-          return this.load();
+          this.load();
+          break;
         case "save":
-          return this.save();
+          this.save();
+          break;
         default:
           this.load();
           this.start();
@@ -132,7 +137,7 @@
             })(this));
           }
           if (this.options.saveOnChange) {
-            return $(this.element).change((function(_this) {
+            $(this.element).change((function(_this) {
               return function() {
                 return _this.save();
               };
@@ -154,7 +159,7 @@
   $.fn[pluginName] = function(option) {
     var pluginID;
     pluginID = "plugin_" + pluginName;
-    return this.each(function() {
+    this.each(function() {
       if (!($.data(this, pluginID) && !supports_html5_storage())) {
         return $.data(this, pluginID, new Phoenix(this, option));
       }

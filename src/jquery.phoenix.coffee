@@ -86,6 +86,7 @@
           @element.value = savedValue
         e = $.Event("phnx.loaded")
         @$element.trigger(e)
+      return
 
     save: ->
       localStorage[@storageKey] = if @$element.is(":checkbox, :radio")
@@ -98,17 +99,20 @@
       e = $.Event("phnx.saved")
       @$element.trigger(e)
       @updateIndex()
+      return
 
     start: ->
       saveTimer = setInterval (=> @save()), @options.saveInterval
       saveTimers.push(saveTimer)
       e = $.Event("phnx.started")
       @$element.trigger(e)
+      return
 
     stop: ->
       saveTimers.forEach (t) -> clearInterval(t)
       e = $.Event("phnx.stopped")
       @$element.trigger(e)
+      return
 
     init: ->
       localStorage[@storageIndexKey] = "[]" if localStorage[@storageIndexKey] == undefined
@@ -121,8 +125,11 @@
         else
           @load()
           @start()
-          $(@options.clearOnSubmit).submit(=> @remove()) if @options.clearOnSubmit
-          $(@element).change(() => @save()) if @options.saveOnChange
+          if @options.clearOnSubmit
+            $(@options.clearOnSubmit).submit(=> @remove())
+          if @options.saveOnChange
+            $(@element).change(=> @save())
+      return
 
   supports_html5_storage = ->
     try
@@ -134,6 +141,7 @@
     pluginID = "plugin_#{pluginName}"
     @each ->
       $.data @, pluginID, new Phoenix(@, option) unless $.data(@, pluginID) && !supports_html5_storage()
+    return
 
   return
 )(jQuery, window)
